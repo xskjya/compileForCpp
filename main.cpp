@@ -1,15 +1,20 @@
 #include <iostream>
+
+#include "BasicParser.h"
+#include "ParserRunner.h"
 #include "include/Iterable.h"
 #include "include/Lexer.h"
 #include "include/Reader.h"
 using namespace std;
+
+
 
 void testLexer();
 void testQueue();
 void testReader(const string& filename);
 void testIterable();
 void testLexerWithPeek();
-
+void testParser();
 
 int main() {
 
@@ -19,7 +24,7 @@ int main() {
     // 测试Lexer词法分析器
     //testLexer();
 	//  测试Lexer词法分析器的预读功能,预加载
-    testLexerWithPeek();
+    // testLexerWithPeek();
 
     // 测试队列数据结构
     //testQueue();
@@ -31,10 +36,36 @@ int main() {
     // 测试迭代
     //testIterable();
 
+    // 测试语法解析器
+    testParser();
+
 
     return 0;
 }
 
+
+
+void testParser() {
+    // 获取词法分析器对象
+    std::string filename = "../assets/test.cpp";
+    Reader reader(filename);
+    Lexer lexer(reader);  // 内部会进行自动token化
+
+    // 打印
+    cout << "token size: " << lexer.getTokensSize() << endl;
+
+    // 获取基础语法分析对象
+    BasicParser bp = BasicParser();
+
+    // 对Lexer词法分析器中的token进行循环遍历进行语法分析处理，生成AST
+    while (lexer.peek(0)->getText() != Token::EoF) {  // 判断是否读取到程序结束
+        // 获取加载的token的抽象语法树ast, 利用parse接口进行语法树解析
+        ASTree ast = bp.parse(lexer);
+
+        // 打印出抽象语法树
+        cout << "==> " << ast.toString() << endl;
+    }
+}
 
 
 void testIterable() {
@@ -134,20 +165,20 @@ void testLexer() {
 
 
 
-// 测试Parser语法分析器
-void testParser() {
-    // lexer分析
-    Lexer lexer;
-    string filename = "test.cpp";
-    Reader reader(filename);
-    Line line;
-
-	// 标识文件结束符
-	signed int EoF = -1;
-    while ((line = reader.readLine()).getLineNumber() != EoF)
-        // line token化
-        lexer.lineTokenize(line);
-
-	// 语法分析
-
-}
+// // 测试Parser语法分析器
+// void testParser() {
+//     // lexer分析
+//     Lexer lexer;
+//     string filename = "test.cpp";
+//     Reader reader(filename);
+//     Line line;
+//
+// 	// 标识文件结束符
+// 	signed int EoF = -1;
+//     while ((line = reader.readLine()).getLineNumber() != EoF)
+//         // line token化
+//         lexer.lineTokenize(line);
+//
+// 	// 语法分析
+//
+// }

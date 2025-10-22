@@ -21,6 +21,8 @@ enum class TokenType {
 };
 
 
+class EoFToken;
+
 class Token {
 
 public:
@@ -28,7 +30,6 @@ public:
     explicit Token(TokenType tt, int l, const string& t ) : tokenType(tt), lineNumber(l), text(t){}
     Token() : tokenType(TokenType::idToken), lineNumber(0) {}  // 默认构造
     virtual ~Token() = default;
-
 
     // 所在行号
     virtual int getLineNo() const;
@@ -45,6 +46,8 @@ public:
     virtual bool isNumber()     const { return false; }
     virtual bool isString()     const { return false; }
 
+    // ② 现在可以安全实例化
+    inline static const std::string EoF = "EOF"; // 默认构造
 
 protected:
     // 声明行号变量
@@ -56,6 +59,7 @@ protected:
     // Token类型
     TokenType tokenType;
 };
+
 
 
 
@@ -83,12 +87,12 @@ public:
 
 };
 
-
 // EOF结束符Toke
 class EoFToken : public Token {
 public:
     EoFToken(): Token(TokenType::eofToken, -1,"EOF") {}
 };
+
 
 
 // 行结束标识符

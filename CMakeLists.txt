@@ -69,6 +69,10 @@ add_executable(mainExecute ${SRC} main.cpp
         include/elementChild.h
         src/common/tokenElementChild.cpp
         include/tokenElementChild.h
+        src/parseAnalysis/parser/BasicParser.cpp
+        include/BasicParser.h
+        src/parseAnalysis/parser/ParserRunner.cpp
+        include/ParserRunner.h
 )
 
 # Boost 库路径（链接目录）

@@ -14,8 +14,18 @@
 
 // 带Reader参数的构造函数，初始化正则表达式
 Lexer::Lexer(Reader& r) : reader(&r), hasMore(true) {
-    // 初始化正则表达式
+    /*
+     *初始化正则表达式
+     */
     regexInitial();
+
+    /*
+     *code转为token化
+     *即将Reader读取的原代码文件中的全部oken化
+     */
+    Line line;
+    signed int EoF = -1;// 标识文件结束符
+    while ((line = r.readLine()).getLineNumber() != EoF) lineTokenize(line);
 }
 
 
@@ -57,8 +67,6 @@ void Lexer::regexInitial() {
     // 用 perl 模式，以便支持 (?: ) 等
     tokenRegex = boost::regex(regexPat, boost::regex::perl);
 }
-
-
 
 
 // 源代码token化实现
@@ -200,8 +208,6 @@ void Lexer::lineTokenize(const Line& line) {
 string Lexer::toStringLiteral(const string s) const {
     return "";
 }
-
-
 
 
 // 读取一行源码并 token 化
