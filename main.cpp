@@ -17,8 +17,6 @@ void testLexerWithPeek();
 void testParser();
 
 int main() {
-
-
     //testIterable();
 
     // 测试Lexer词法分析器
@@ -60,10 +58,10 @@ void testParser() {
     // 对Lexer词法分析器中的token进行循环遍历进行语法分析处理，生成AST
     while (lexer.peek(0)->getText() != Token::EoF) {  // 判断是否读取到程序结束
         // 获取加载的token的抽象语法树ast, 利用parse接口进行语法树解析
-        ASTree ast = bp.parse(lexer);
+        std::shared_ptr<ASTree>  ast = bp.parse(lexer);
 
         // 打印出抽象语法树
-        cout << "==> " << ast.toString() << endl;
+        cout << "==> " << ast->toString() << endl;
     }
 }
 

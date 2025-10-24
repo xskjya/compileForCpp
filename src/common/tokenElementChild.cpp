@@ -4,8 +4,15 @@
 
 #include "../../include/tokenElementChild.h"
 #include "Lexer.h"   // 用到 peek/read 等
+#include "Name.h"
+#include "NumberLiteral.h"
+#include "StringLiteral.h"
 
 namespace tokenElementChild {
+
+    // 静态成员定义
+    template<typename leafType>
+    std::set<std::string> IdTokenElement<leafType>::reserved;
 
     /* ---------- ATokenElement 实现 ---------- */
     template<typename leafType>  // 模板参数：叶节点类型，默认为 ASTLeaf
@@ -46,8 +53,6 @@ namespace tokenElementChild {
             throw ParseException(t->getText() + " type mismatch");
         }
     }
-
-
 
     /* ---------- NumTokenElement 实现 ---------- */
     // ------------------------------------------------------
@@ -91,4 +96,11 @@ namespace tokenElementChild {
             return t.isString();
         }
 
+
+
+
+    /* ---------- 显式实例化（必须） ---------- */
+    template class NumTokenElement<NumberLiteral>;
+    template class StrTokenElement<StringLiteral>;
+    template class IdTokenElement<Name>;
 } // namespace tokenElementChild

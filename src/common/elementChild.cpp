@@ -10,7 +10,6 @@ using namespace elementChild;
 
 
 /*************************派生类：具体语法元素实现*********************************/
-
 // ---------- TreeElement ----------
 //TreeElement: 解析一个 ASTree 节点,   接收一个 Parser 对象
 //用途：当某一部分语法本身又由一个子 Parser 定义（例如一个语句块或子表达式），就用 Tree 来嵌套。
@@ -346,11 +345,27 @@ doShift(lexer, left, prec) 的大致策略：
     (b) 看到 +（prec=1），进入 doShift，读 +，解析 right 因子得到 2。
     (c) 看到下一个运算符 *（prec=2），因为 2 的优先级更高（prec < nextPrec），所以 right 会先与 * 3 结合形成 2 * 3，然后再与 1 + (2 * 3) 结合。结果正确体现乘法优先于加法。
 */
-Expr::Expr(Operators& op, Parser& exp):ops(op), factor(std::make_shared<Parser>(exp) )  // 这里直接调用拷贝构造函数
-    {
-		// 创建一个List的ASTList工厂 ，用于自动生成ASTList节点
-        factory = Factory::getForASTList();
-    }
+// Expr::Expr(Parser& exp, Operators& op):ops(op), factor(std::make_shared<Parser>(exp) )  // 这里直接调用拷贝构造函数
+// {
+// 	// 创建一个List的ASTList工厂 ，用于自动生成ASTList节点
+//     factory = Factory::getForASTList();
+// }
+
+// 假设你的成员叫 parser_ 和 ops_，按实际改名
+Expr::Expr(Parser& exp, Operators& op)
+    : ops(op), factor(std::make_shared<Parser>(exp) )
+{
+    // 创建一个List的ASTList工厂 ，用于自动生成ASTList的派生类BinaryExpr     BinaryExpr entends ASTList
+    factory = Factory::getForASTList();
+}
+
+// 带类型参数
+template<typename  T>
+Expr::Expr(Parser& exp, Operators& op):ops(op), factor(std::make_shared<Parser>(exp) )  // 这里直接调用拷贝构造函数
+{
+// 创建一个List的ASTList工厂 ，用于自动生成ASTList的派生类BinaryExpr     BinaryExpr entends ASTList
+    factory = Factory::getForASTList<T>();
+}
 
 
 // 重载match方法

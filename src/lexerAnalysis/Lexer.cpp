@@ -14,7 +14,7 @@
 
 // 带Reader参数的构造函数，初始化正则表达式
 Lexer::Lexer(Reader& r) : reader(&r), hasMore(true) {
-    
+
     /*
      *初始化正则表达式
      */

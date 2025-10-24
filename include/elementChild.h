@@ -158,7 +158,7 @@ namespace elementChild {
     class Skip : public Leaf {
     public:
         // 构造函数
-        Skip(const vector<string>& t) ;
+        Skip(const vector<string>& t);
 
         // 覆盖 find 为不做任何事情
         void find(vector<std::shared_ptr<ASTree>>& res, Token* t) override;
@@ -235,7 +235,7 @@ namespace elementChild {
 
     举例（直观）：
     1. 假设 + 优先级 1（左结合）， * 优先级 2（左结合）
-    2. 当解析 1 + 2 * 3：
+    2. 当解析 1 + 2 * 3:
         (a) 解析到 1（left）。
         (b) 看到 +（prec=1），进入 doShift，读 +，解析 right 因子得到 2。
         (c) 看到下一个运算符 *（prec=2），因为 2 的优先级更高（prec < nextPrec），所以 right 会先与 * 3 结合形成 2 * 3，然后再与 1 + (2 * 3) 结合。结果正确体现乘法优先于加法。
@@ -250,8 +250,11 @@ namespace elementChild {
         std::shared_ptr<Parser> factor;   // 改为智能指针
 
         // 构造函数
-        explicit Expr(Operators& op, Parser& exp);
+        explicit Expr(Parser& exp, Operators& op);
 
+        // 带返回ast类型的构造函数
+        template<typename  T>
+        explicit Expr(Parser& exp, Operators& op);
 
         // 重载match方法
         bool match(Lexer& lexer) const override;
@@ -265,7 +268,6 @@ namespace elementChild {
 
         // 是一个递归下降解析器中处理运算符优先级与结合律的核心函数
         std::shared_ptr<ASTree> doShift(Lexer& lexer, std::shared_ptr<ASTree> left, int prec);
-
 
         /*
         判断当前运算符的右边部分是否应继续作为“表达式的一部分”被解析。

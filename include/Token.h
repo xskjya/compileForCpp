@@ -48,6 +48,8 @@ public:
 
     // ② 现在可以安全实例化
     inline static const std::string EoF = "EOF"; // 默认构造
+    // ② 现在可以安全实例化
+    inline static const std::string EoL = "EOL"; // 默认构造
 
 protected:
     // 声明行号变量

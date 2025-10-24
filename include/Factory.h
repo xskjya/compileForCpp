@@ -57,6 +57,9 @@ protected:
     virtual std::shared_ptr<ASTree> make0(void* arg) = 0;
 };
 
+
+
+
 /* ----------------------------------------------------------
  * 非模板实现
  * ---------------------------------------------------------- */
@@ -74,7 +77,7 @@ inline std::shared_ptr<ASTree> Factory::make(void* arg) {
  * 模板实现
  * ---------------------------------------------------------- */
 template <typename T, typename ArgType>
-std::shared_ptr<Factory> Factory::get() {
+inline std::shared_ptr<Factory> Factory::get() {
     if constexpr (std::is_void_v<T>)
         return nullptr;
 
@@ -105,7 +108,7 @@ std::shared_ptr<Factory> Factory::get() {
 }
 
 template <typename T>
-std::shared_ptr<Factory> Factory::getForASTList() {
+inline std::shared_ptr<Factory> Factory::getForASTList() {
     if (auto f = get<T, std::vector<std::shared_ptr<ASTree>>>())
         return f;
 
@@ -118,6 +121,7 @@ std::shared_ptr<Factory> Factory::getForASTList() {
     };
     return std::make_shared<DefaultFactory>();
 }
+
 
 /* 显式实例化：所有链接器会用到的组合 */
 template std::shared_ptr<Factory> Factory::get<ASTree , std::vector<std::shared_ptr<ASTree>>>();
