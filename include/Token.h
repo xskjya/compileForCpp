@@ -92,7 +92,7 @@ public:
 // EOF结束符Toke
 class EoFToken : public Token {
 public:
-    EoFToken(): Token(TokenType::eofToken, -1,"EOF") {}
+    EoFToken(): Token(TokenType::eofToken, -1,Token::EoF) {}
 };
 
 

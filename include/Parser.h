@@ -45,20 +45,26 @@ public:
     // 手动向当前规则添加一个 Element
     void addElement(std::shared_ptr<Element> elem);
 
-    // 构建一个parser对象，静态函数
-    static  Parser rule();
 
+
+
+
+
+    // 构建一个parser对象，静态函数
+    static  std::shared_ptr<Parser> rule();
     template<typename clazz=ASTree>
-    static  Parser rule();
+    static  std::shared_ptr<Parser> rule();
 
 
     //=================== 初始化规则 ===================
-    // 模板 reset：初始化为指定 AST 类型
-    template<typename ASTClass>
+    template<typename ASTClass, typename argtype= vector<std::shared_ptr<ASTree>>>
+    std::shared_ptr<Parser> reset();
+    // 非模板 reset：仅清空元素，不改变工厂
     std::shared_ptr<Parser> reset();
 
-    // 非模板 reset：仅清空元素，不改变工厂
-    std::shared_ptr<Parser> reset() ;
+
+
+
 
     //=================== 链式 API（规则构造） ===================
 
@@ -70,15 +76,12 @@ public:
     template<typename leafType = ASTLeaf>  // 模板参数：叶节点类型，默认为 ASTLeaf
     std::shared_ptr<Parser> identifier(const std::set<std::string>& reserved) ;
 
-
     // 3️⃣ 字符串字面量规则
     template<typename leafType = ASTLeaf>  // 模板参数：叶节点类型，默认为 ASTLeaf
     std::shared_ptr<Parser> str() ;
 
-
     // 4️⃣ 匹配指定 token（例如 "+"、"-"）
     std::shared_ptr<Parser> token(const std::vector<std::string>& pat);
-
 
     // 5️⃣ 跳过指定 token（例如分号、括号）
     template<typename... Args>
@@ -121,12 +124,50 @@ inline Parser::Parser() {
     reset<ASTClass>(); // 初始化工厂和清空元素列表
 }
 
-template<typename clazz>
-inline Parser Parser::rule()              // 带模板参数版本
+
+//=================== 初始化规则 ===================
+// 模板 reset：初始化为指定 AST 类型
+template<typename ASTClass, typename argtype>
+inline std::shared_ptr<Parser> Parser::reset() {
+
+    // 若是 ASTList 类型，使用专用工厂
+    if constexpr (std::is_same_v<ASTClass, ASTList>) {
+        factory = Factory::getForASTList();
+    }
+    // 否则使用模板工厂
+    else {
+        factory = Factory::get<ASTClass, argtype>();
+    }
+    elements.clear();             // 清空元素
+    return shared_from_this();    // 返回自身（链式调用）
+}
+
+// 非模板 reset：仅清空元素，不改变工厂
+inline std::shared_ptr<Parser> Parser::reset() {
+    elements.clear();
+    return shared_from_this();
+}
+
+// 带模板参数版本：每次调用都会new一个Parser对象
+inline std::shared_ptr<Parser> Parser::rule()
 {
-    Parser p;
-    p.reset<clazz>();     // 假设 reset<clazz>() 已定义
+    auto p = std::make_shared<Parser>(); // 先让 shared_ptr 拥有对象
+    p->reset();                   // 再调 Parser 自己的模板成员
     return p;
+}
+
+template<typename clazz>
+inline std::shared_ptr<Parser> Parser::rule()
+{
+    auto p = std::make_shared<Parser>(); // 先让 shared_ptr 拥有对象
+    p->reset<clazz>();                   // 再调 Parser 自己的模板成员
+    return p;
+}
+
+//=================== 添加语法单元 ===================
+// 手动向当前规则添加一个 Element
+inline  void Parser::addElement(std::shared_ptr<Element> elem) {
+    elements.push_back(elem);
 }
 
 //=================== 匹配判断 ===================
@@ -139,41 +180,26 @@ inline bool Parser::match(Lexer& lexer) const {
 //=================== 主解析函数 ===================
 // 顺序执行每个语法单元的 parse()，并将结果组合成 AST
 inline std::shared_ptr<ASTree> Parser::parse(Lexer& lexer) {
+
+    cout << "[3] 顺序执行每个语法单元的 parse()，并将结果组合成 AST" << endl;
     std::vector<std::shared_ptr<ASTree>> results;  // 子节点结果容器
-    for (auto& e : elements) {
+
+    for (int i=0; i < elements.size(); i++) {
+        auto e = elements[i];
+        cout << "(" << i+1 <<") elements:" << e << endl;
+
         e->parse(lexer, results);                  // 执行各语法单元
     }
+
+    cout << "[4] 解析语法单元，并将其构造成AST" << endl;
     return factory->make(&results);                 // 工厂生成 AST 节点
 }
 
-//=================== 添加语法单元 ===================
-// 手动向当前规则添加一个 Element
-inline  void Parser::addElement(std::shared_ptr<Element> elem) {
-    elements.push_back(elem);
-}
 
 
-//=================== 初始化规则 ===================
-// 模板 reset：初始化为指定 AST 类型
-template<typename ASTClass>
-inline std::shared_ptr<Parser> Parser::reset() {
-    // 若是 ASTList 类型，使用专用工厂
-    if constexpr (std::is_same_v<ASTClass, ASTList>) {
-        factory = Factory::getForASTList();
-    }
-    // 否则使用模板工厂
-    else {
-        factory = Factory::get<ASTClass, Token>();
-    }
-    elements.clear();             // 清空元素
-    return shared_from_this();    // 返回自身（链式调用）
-}
 
-// 非模板 reset：仅清空元素，不改变工厂
-inline std::shared_ptr<Parser> Parser::reset() {
-    elements.clear();
-    return shared_from_this();
-}
+
+
 
 //=================== 链式 API（规则构造） ===================
 // 1️⃣ 整数字面量规则
@@ -217,6 +243,7 @@ inline std::shared_ptr<Parser> Parser::sep(Args&&... args) {
     elements.push_back(e);
     return shared_from_this();
 }
+
 
 // 6️⃣ 嵌套语法规则（子树）
 inline std::shared_ptr<Parser> Parser::ast(std::shared_ptr<Parser> p) {
@@ -276,6 +303,13 @@ inline std::shared_ptr<Parser> Parser::repeat(std::shared_ptr<Parser> p) {
     elements.push_back(e);
     return shared_from_this();
 }
+
+
+
+
+
+
+
 
 // 12️⃣ 动态插入新的分支（扩展语法）
 inline std::shared_ptr<Parser> Parser::insertChoice(std::shared_ptr<Parser> p) {

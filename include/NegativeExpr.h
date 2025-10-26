@@ -13,7 +13,7 @@
 // 语法树中代表 “负号表达式” 的节点，比如 -3、-x 等
 class NegativeExpr : public ASTList {
 public:
-    explicit NegativeExpr(std::vector<std::shared_ptr<ASTree>>& c);
+    explicit NegativeExpr(const std::vector<std::shared_ptr<ASTree>>& c);
 
     /* 取得唯一操作数（-x 里的 x） */
     std::shared_ptr<ASTree> operand();

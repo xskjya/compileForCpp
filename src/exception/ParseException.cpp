@@ -23,5 +23,6 @@ std::string ParseException::location(const Token& t) const {
 
 // 重载what
 const char* ParseException::what() const noexcept {
+    // cout << "test..................." <<endl;
     return msg.c_str();
 }

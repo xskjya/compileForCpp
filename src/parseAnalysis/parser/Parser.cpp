@@ -14,7 +14,8 @@ Parser::Parser()  = default;                        // 默认构造
 
 
 // 非模板版本
-Parser Parser::rule() { return Parser(); }
+// std::shared_ptr<Parser> Parser::rule() { return std::make_shared<Parser>(); }
+
 // 析构
 Parser::~Parser() = default;
 

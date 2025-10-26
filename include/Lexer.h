@@ -54,6 +54,13 @@ public:
     // 对Line对象实现Token化
     void lineTokenize(const Line& line);
 
+    /*
+     *code转为token化
+     *即将Reader读取的原代码文件中的全部oken化
+     */
+    void readerToTokens(Reader& r);
+
+
 private:
     vector<string> tokens;
     boost::regex tokenRegex;

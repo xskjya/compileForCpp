@@ -140,7 +140,7 @@ ATokenElement<leafType>::ATokenElement() {
     static_assert(std::is_base_of<ASTLeaf, leafType>::value, "LeafType must derive from ASTLeaf");
 
     // 获取工厂对象实例
-    factory = Factory::get<leafType, Token>();
+    factory = Factory::get<leafType, Token*>();
 }
 
 template<typename leafType>
@@ -345,11 +345,7 @@ doShift(lexer, left, prec) 的大致策略：
     (b) 看到 +（prec=1），进入 doShift，读 +，解析 right 因子得到 2。
     (c) 看到下一个运算符 *（prec=2），因为 2 的优先级更高（prec < nextPrec），所以 right 会先与 * 3 结合形成 2 * 3，然后再与 1 + (2 * 3) 结合。结果正确体现乘法优先于加法。
 */
-// Expr::Expr(Parser& exp, Operators& op):ops(op), factor(std::make_shared<Parser>(exp) )  // 这里直接调用拷贝构造函数
-// {
-// 	// 创建一个List的ASTList工厂 ，用于自动生成ASTList节点
-//     factory = Factory::getForASTList();
-// }
+
 
 // 假设你的成员叫 parser_ 和 ops_，按实际改名
 Expr::Expr(Parser& exp, Operators& op)
@@ -410,7 +406,7 @@ std::shared_ptr<ASTree> Expr::doShift(Lexer& lexer, std::shared_ptr<ASTree> left
     // 解析右操作数
     std::shared_ptr<ASTree> right = factor->parse(lexer);
 
-    // g构造下一个next优先级对象
+    // 构造下一个next优先级对象
     Precedence* next;
 
     // 递归算法循环遍历：遍历token 判断条件， 当优先级
@@ -427,7 +423,7 @@ std::shared_ptr<ASTree> Expr::doShift(Lexer& lexer, std::shared_ptr<ASTree> left
     list.push_back(right);
 
     // 通过工厂模式创建 ASTList 对象返回
-    std::shared_ptr<ASTree> ast = factory->make(&list);                 // 工厂生成 AST 节点
+    std::shared_ptr<ASTree> ast = factory->make(&list);
 
     // 如果 list.size() == 1 返回单节点，否则返回 ASTList
     return ast;   // 创建ASTList方法

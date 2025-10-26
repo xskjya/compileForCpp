@@ -5,7 +5,7 @@
 #include "../../../../../include/NegativeExpr.h"
 
 
-NegativeExpr::NegativeExpr(std::vector<std::shared_ptr<ASTree>>& c)
+NegativeExpr::NegativeExpr(const std::vector<std::shared_ptr<ASTree>>& c)
     : ASTList(c) {}
 
 std::shared_ptr<ASTree> NegativeExpr::operand() {

@@ -5,6 +5,7 @@
 #ifndef MYPROJECT_FACTORY_H
 #define MYPROJECT_FACTORY_H
 
+#include <iostream>
 #include <memory>
 #include <vector>
 #include <string>
@@ -78,6 +79,14 @@ inline std::shared_ptr<ASTree> Factory::make(void* arg) {
  * ---------------------------------------------------------- */
 template <typename T, typename ArgType>
 inline std::shared_ptr<Factory> Factory::get() {
+
+    /* 临时调试，确认到底哪一对类型挂了 ----------------- */
+    std::cout << "[Factory::get] T        = " << typeid(T).name() << endl;
+    std::cout << "[Factory::get] ArgType  = " << typeid(ArgType).name() << endl;
+    std::cout << "-------------------------------------------------------------------"<< endl;
+    /* -------------------------------------------------- */
+
+
     if constexpr (std::is_void_v<T>)
         return nullptr;
 
@@ -102,6 +111,16 @@ inline std::shared_ptr<Factory> Factory::get() {
         return std::make_shared<ConstructorFactory>();
     }
     else {
+        std::cerr << "[Factory::get] no match for "
+             << typeid(T).name() << " with "
+             << typeid(ArgType).name() << '\n';
+        /* ===== 调试断点，程序会停在这里 ===== */
+        #if defined(__GNUC__) || defined(__clang__)
+                __builtin_trap();          // 触发 SIGTRAP，gdb 能直接 bt
+        #elif defined(_MSC_VER)
+                __debugbreak();
+        #endif
+
         throw std::runtime_error(
             "Factory::get - no suitable create() or constructor found for type");
     }

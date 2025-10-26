@@ -44,7 +44,7 @@ public:
     它直接传递给 ASTList 的构造函数；
     ASTList 内部会保存 children = c
     */
-    BlockStmnt(vector<std::shared_ptr<ASTree>>& c);
+    BlockStmnt(const vector<std::shared_ptr<ASTree>>& c);
 };
 
 

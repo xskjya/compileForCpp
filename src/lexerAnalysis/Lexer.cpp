@@ -12,6 +12,19 @@
 #include <deque>
 
 
+/*
+ *code转为token化
+ *即将Reader读取的原代码文件中的全部oken化
+ */
+void Lexer::readerToTokens(Reader& r) {
+    Line line;
+    while ((line = r.readLine()).getLineNumber() > 0 ) {
+        lineTokenize(line);
+    }
+    // 添加结束符Token
+    if (line.getLineNumber() == -1) addToken(TokenType::eofToken, line.getLineNumber(), Token::EoF);
+};
+
 // 带Reader参数的构造函数，初始化正则表达式
 Lexer::Lexer(Reader& r) : reader(&r), hasMore(true) {
 
@@ -24,9 +37,7 @@ Lexer::Lexer(Reader& r) : reader(&r), hasMore(true) {
      *code转为token化
      *即将Reader读取的原代码文件中的全部oken化
      */
-    Line line;
-    signed int EoF = -1;// 标识文件结束符
-    while ((line = r.readLine()).getLineNumber() != EoF) lineTokenize(line);
+    readerToTokens(r);
 }
 
 

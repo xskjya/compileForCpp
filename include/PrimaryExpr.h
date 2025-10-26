@@ -24,7 +24,7 @@ public:
     PrimaryExpr(const vector<std::shared_ptr<ASTree>>& list);
 
     // 工厂函数：当只有一个子节点时直接返回该节点，否则返回一个 PrimaryExpr
-    static ASTree* create(std::vector<std::shared_ptr<ASTree>> &c);
+    static std::shared_ptr<ASTree> create(std::vector<std::shared_ptr<ASTree>>& c);
 };
 
 
