@@ -73,6 +73,8 @@ add_executable(mainExecute ${SRC} main.cpp
         include/BasicParser.h
         src/parseAnalysis/parser/ParserRunner.cpp
         include/ParserRunner.h
+        src/common/Utils.cpp
+        include/Utils.h
 )
 
 # Boost 库路径（链接目录）

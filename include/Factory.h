@@ -11,6 +11,7 @@
 #include <string>
 #include <stdexcept>
 #include <type_traits>
+#include "Utils.h"
 
 // ① 前置声明（减少其余文件依赖）
 class ASTree;
@@ -81,8 +82,8 @@ template <typename T, typename ArgType>
 inline std::shared_ptr<Factory> Factory::get() {
 
     /* 临时调试，确认到底哪一对类型挂了 ----------------- */
-    std::cout << "[Factory::get] T        = " << typeid(T).name() << endl;
-    std::cout << "[Factory::get] ArgType  = " << typeid(ArgType).name() << endl;
+    std::cout << "[Factory::get] T        = " <<demangle(typeid(T).name()) << endl;
+    std::cout << "[Factory::get] ArgType  = " << demangle(typeid(ArgType).name()) << endl;
     std::cout << "-------------------------------------------------------------------"<< endl;
     /* -------------------------------------------------- */
 
@@ -112,8 +113,9 @@ inline std::shared_ptr<Factory> Factory::get() {
     }
     else {
         std::cerr << "[Factory::get] no match for "
-             << typeid(T).name() << " with "
-             << typeid(ArgType).name() << '\n';
+             << demangle(typeid(T).name()) << " with "
+             << demangle(typeid(ArgType).name()) << endl;
+
         /* ===== 调试断点，程序会停在这里 ===== */
         #if defined(__GNUC__) || defined(__clang__)
                 __builtin_trap();          // 触发 SIGTRAP，gdb 能直接 bt

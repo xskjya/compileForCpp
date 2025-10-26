@@ -12,6 +12,7 @@
 #include "Factory.h"
 #include  "elementChild.h"
 #include "tokenElementChild.h"
+#include "Utils.h"
 using namespace  elementChild;
 
 
@@ -186,7 +187,7 @@ inline std::shared_ptr<ASTree> Parser::parse(Lexer& lexer) {
 
     for (int i=0; i < elements.size(); i++) {
         auto e = elements[i];
-        cout << "(" << i+1 <<") elements:" << e << endl;
+        printTypeInfo(*e,  "(" + std::to_string(i+1) + ")[Parser::parse] elements");
 
         e->parse(lexer, results);                  // 执行各语法单元
     }
@@ -194,7 +195,6 @@ inline std::shared_ptr<ASTree> Parser::parse(Lexer& lexer) {
     cout << "[4] 解析语法单元，并将其构造成AST" << endl;
     return factory->make(&results);                 // 工厂生成 AST 节点
 }
-
 
 
 
