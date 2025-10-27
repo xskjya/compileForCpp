@@ -9,11 +9,12 @@
 #include <iostream>
 #include <typeinfo>
 #include <memory>
+#include <vector>
+
 
 #if defined(__GNUG__)
 #include <cxxabi.h>
-#include <cstdlib>
-#include <memory>
+
 
 // ✅ GNU/Clang 平台（Linux, macOS）
 inline std::string demangle(const char* name) {
@@ -54,6 +55,19 @@ template<typename ObjType>
 inline void printTypeInfo(const ObjType& obj, const std::string& prefix = "[ObjectType]") {
     std::cout << prefix << " = " << demangle(typeid(obj).name()) << std::endl;
 }
+
+
+// *********************封装BNF打印函数********************************
+// 打印调试Or语法： 对应 |
+template <typename P>
+void printfOr(const std::vector<std::shared_ptr<P>>& parsers) {
+    for (std::size_t i = 0; i < parsers.size(); ++i) {
+        std::cout << demangle(typeid(*parsers[i]).name());
+        if (i + 1 != parsers.size()) std::cout << " | ";
+    }
+    std::cout << std::endl;
+}
+
 
 
 #endif //MYPROJECT_UTILS_H

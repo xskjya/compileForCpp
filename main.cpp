@@ -55,17 +55,20 @@ void testParser() {
     // 获取基础语法分析对象
     BasicParser bp = BasicParser();
 
-    // cout << "BasicParser bp finish" << endl;
     // 对Lexer词法分析器中的token进行循环遍历进行语法分析处理，生成AST
-    while (lexer.peek(0)->getText() != Token::EoF) {  // 判断是否读取到程序结束
-
-        // 调试
-        cout << "Token:" << lexer.peek(0)->getText() << endl;
-
-        // 获取加载的token的抽象语法树ast, 利用parse接口进行语法树解析
+    while (lexer.peek(0)->getText() != Token::EoF) {  // 目的是保证整个循环执行，直到token为EOF结束
+        /*
+         * 调用实现预定义的BNF语法基础解析器的解析接口进行处理
+         * 操作对象： 词法分析器对象lexer
+         * 接口方法： parse(Lexer& lexer)
+         */
         std::shared_ptr<ASTree>  ast = bp.parse(lexer);
 
-        // 打印出抽象语法树
+        /*
+         * 打印出抽象语法树:
+         * ASTList类的toString方法将调用所有子节点的ASTree对象的toString方法，
+         * 并用空白符连接所有字符串，最后在两侧添加括号后返回
+         */
         cout << "==> " << ast->toString() << endl;
     }
 }

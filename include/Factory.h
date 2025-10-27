@@ -128,6 +128,7 @@ inline std::shared_ptr<Factory> Factory::get() {
     }
 }
 
+
 template <typename T>
 inline std::shared_ptr<Factory> Factory::getForASTList() {
     if (auto f = get<T, std::vector<std::shared_ptr<ASTree>>>())

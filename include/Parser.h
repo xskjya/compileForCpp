@@ -16,6 +16,8 @@
 using namespace  elementChild;
 
 
+
+
 //===================================================================
 // Parser 类：基于组合子模式的语法规则构造器
 // 用于定义、组合并执行语法规则，生成对应的抽象语法树（AST）。
@@ -255,9 +257,11 @@ inline std::shared_ptr<Parser> Parser::ast(std::shared_ptr<Parser> p) {
 // 7️⃣ 多选分支（OrTree）
 template<typename... Args>
 inline std::shared_ptr<Parser> Parser::Or(Args&&... args) {
-
     // 确保所有实参都是 shared_ptr<Parser> 或可隐式转换
     std::vector<std::shared_ptr<Parser>> parsers{ std::forward<Args>(args)... };
+
+    // 打印调试
+    printfOr<Parser>(parsers);
 
     std::shared_ptr<Element> e = std::make_shared<OrTreeElement>(parsers);
     elements.push_back(e);

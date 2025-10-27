@@ -4,6 +4,13 @@
 
 #include "../../../include/BasicParser.h"
 
+#include "BinaryExpr.h"
+#include "BlockStmnt.h"
+#include "Name.h"
+#include "NegativeExpr.h"
+#include "NumberLiteral.h"
+#include "PrimaryExpr.h"
+#include "StringLiteral.h"
 
 
 // 对Parser类的进一步应用化利用封装
@@ -53,8 +60,12 @@ BasicParser::BasicParser() {
     operators.add("%", 4,Associativity::RIGHT);
 
 
-    cout << "[1] 语法语素构成.....  都封装成Parser类进行传递处理" << endl;
+    cout << "[1] 语法语素构成,都封装成Parser类进行传递处理" << endl;
+
+
     /****************语法语素构成: 都封装成Parser类进行传递处理********************/
+    cout << "BNF: " << endl;
+
     /*
      * 0. 初始化为无类型工厂的expr
      */
@@ -164,10 +175,15 @@ std::shared_ptr<Parser>  BasicParser::rule() {
 }
 
 
-// 解析接口: lexer -》 Parser => ast
+
+/*
+ * 该方法将从词法分析器逐一读取非终结符program。即，以语句为单位读取单词，并进行语法分析。parse方法的返回值是一棵抽象语法树
+ * 即该方法是处理一个非终结符program[即一条语句为单位], 并返回一个对应的ast。
+ */
 std::shared_ptr<ASTree> BasicParser::parse(Lexer& lexer) {
     // 调试
-    cout << "[2] 调用语法语句program解析......" << endl;
+    cout << "[2] 处理一个非终结符program，即一条语句， 并返回对应非终结符program语句的ast" << endl;
+
     return  program->parse(lexer);
 };
 

@@ -263,6 +263,9 @@ string Precedence::assocName() const {
 
 // 添加运算符优先级
 void Operators::add(const string& op, int prec, Associativity assoc) {
+    // 打印输出
+    cout << "Operators:" << op << " prec: " << prec << " assoc: " << int(assoc) <<endl;
+
     table[op] = Precedence(prec, assoc);
 }
 

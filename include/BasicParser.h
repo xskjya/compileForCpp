@@ -5,16 +5,8 @@
 #ifndef MYPROJECT_BASICPARSER_H
 #define MYPROJECT_BASICPARSER_H
 #include "ASTree.h"
-#include "BinaryExpr.h"
-#include "BlockStmnt.h"
 #include "Lexer.h"
-#include "Name.h"
-#include "NegativeExpr.h"
-#include "NUllStmnt.h"
-#include "NumberLiteral.h"
 #include "Parser.h"
-#include "PrimaryExpr.h"
-#include "StringLiteral.h"
 
 
 // 对Parser类的进一步应用化利用封装
