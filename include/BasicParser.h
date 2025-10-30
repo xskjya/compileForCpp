@@ -36,11 +36,10 @@ public:
     // 操作符对象
     Operators operators;
     // 抽象语法规则对象
-    std::shared_ptr<Parser>  rule();
-
+    std::shared_ptr<Parser>  rule(std::string info = "test");
 
     template<typename T>
-    std::shared_ptr<Parser>  rule();
+    std::shared_ptr<Parser>  rule(std::string info = "test");
 
 
     // 解析接口: lexer -》 Parser => ast

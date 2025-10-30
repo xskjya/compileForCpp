@@ -31,28 +31,39 @@ namespace tokenElementChild {
 
 
 
+    // ATokenElement: 解析一个特定类型的 Token（如标识符、数字、字符串等）；用于匹配具体的 TokenType。
+    // 基于 token 的原子解析 抽象类，集中处理“从 Lexer 读一个 token 并根据 test(Token t) 判断是否符合”的模式：
+    // 用途：匹配标识符、数字、字符串字面量等原子 token。
+    // 是一种 “原子语法元素”（atomic element）——在解析器组合子结构中负责匹配并生成 单个叶子节点（ASTLeaf）
+    // ASTLeaf的子类为NumberLiteral和Name，分别用于匹配数字和标识符
+    // 默认为 ASTLeaf 节点，但可通过工厂函数定制为其他类型的叶节点（如 NumberLiteral、Name 等）。
+    //数字 token → NumberLiteral.class
+    //标识符 token → Name.class
+    //默认情况 → ASTLeaf.class
     template<typename leafType>  // 模板参数：叶节点类型，默认为 ASTLeaf
     class ATokenElement : public Element {
-protected:
-    std::shared_ptr<Factory> factory;                // AST 节点工厂
-    // =====================
-    // 构造函数模板：传入 ASTLeaf 派生类类型
-    // 如果未传入类型，则默认使用 ASTLeaf
-    // =====================
-    // 修复：为 Factory::get 增加默认参数类型（Token），以匹配模板定义
-    ATokenElement() ;
-public:
-    // 重载match函数
-    bool match(Lexer& lexer) const override;
+    protected:
 
-    // 解析器
-    void parse(Lexer& lexer, std::vector<std::shared_ptr<ASTree>>& res)  override;
+        // AST 节点工厂
+        std::shared_ptr<Factory> factory;
 
-    // 子类实现
-    virtual bool test(const Token& t) const = 0;
-};
+        // =====================
+        // 构造函数模板：传入 ASTLeaf 派生类类型
+        // 如果未传入类型，则默认使用 ASTLeaf
+        // =====================
+        // 修复：为 Factory::get 增加默认参数类型（Token），以匹配模板定义
+        ATokenElement();
 
+    public:
+        // 重载match函数
+        bool match(Lexer& lexer) const override ;
 
+        // 解析器
+        void parse(Lexer& lexer, std::vector<std::shared_ptr<ASTree>>& res)  override;
+
+        // 子类实现
+        virtual bool test(const Token& t) const  = 0;
+    };
 
 
     // ------------------------------------------------------

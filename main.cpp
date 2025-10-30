@@ -1,7 +1,6 @@
 #include <iostream>
 
-#include "BasicParser.h"
-#include "ParserRunner.h"
+#include "include/BasicParser.h"
 #include "include/Iterable.h"
 #include "include/Lexer.h"
 #include "include/Reader.h"
@@ -15,6 +14,7 @@ void testReader(const string& filename);
 void testIterable();
 void testLexerWithPeek();
 void testParser();
+void test(int& i);
 
 int main() {
     //testIterable();
@@ -37,12 +37,16 @@ int main() {
     // 测试语法解析器
     testParser();
 
-
     return 0;
 }
 
 
+void test(int& t) {
+    t= 10;
+}
 
+
+// 测试语法分析器
 void testParser() {
     // 获取词法分析器对象
     std::string filename = "../assets/test.cpp";
@@ -52,11 +56,12 @@ void testParser() {
     // 打印
     cout << "token size: " << lexer.getTokensSize() << endl;
 
-    // 获取基础语法分析对象
+    // 实例化一个基础解析器对象
     BasicParser bp = BasicParser();
 
     // 对Lexer词法分析器中的token进行循环遍历进行语法分析处理，生成AST
     while (lexer.peek(0)->getText() != Token::EoF) {  // 目的是保证整个循环执行，直到token为EOF结束
+
         /*
          * 调用实现预定义的BNF语法基础解析器的解析接口进行处理
          * 操作对象： 词法分析器对象lexer

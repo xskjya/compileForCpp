@@ -16,7 +16,8 @@
 using namespace  elementChild;
 
 
-
+// 定义一个调试别名
+typedef  std::string Debug;
 
 //===================================================================
 // Parser 类：基于组合子模式的语法规则构造器
@@ -24,17 +25,19 @@ using namespace  elementChild;
 //===================================================================
 class Parser : public std::enable_shared_from_this<Parser> {
 public:
-    //=================== 构造函数 ===================
+    // 调试info
+    Debug info ;
 
+    //=================== 构造函数 ===================
     // 模板构造函数：初始化为指定 AST 节点类型的解析器
     template<typename ASTClass>
-    Parser();
+    Parser(std::string info = "test");
 
-    Parser();   // 默认构造函数
+    Parser(std::string info = "test");   // 默认构造函数
     ~Parser();  // 默认析构函数
 
     // 拷贝构造函数：复制另一个 Parser 的元素与工厂
-    Parser(const Parser& p);
+    Parser(const Parser& p, std::string info = "test");
 
     //=================== 匹配判断 ===================
     // 判断输入 token 是否与第一个语法单元匹配
@@ -54,9 +57,9 @@ public:
 
 
     // 构建一个parser对象，静态函数
-    static  std::shared_ptr<Parser> rule();
+    static  std::shared_ptr<Parser> rule(std::string info);
     template<typename clazz=ASTree>
-    static  std::shared_ptr<Parser> rule();
+    static  std::shared_ptr<Parser> rule(std::string info);
 
 
     //=================== 初始化规则 ===================
@@ -123,7 +126,7 @@ public:
 
 // 模板构造函数：初始化为指定 AST 节点类型的解析器
 template<typename ASTClass>
-inline Parser::Parser() {
+inline Parser::Parser(std::string info): info(info) {
     reset<ASTClass>(); // 初始化工厂和清空元素列表
 }
 
@@ -151,21 +154,27 @@ inline std::shared_ptr<Parser> Parser::reset() {
     return shared_from_this();
 }
 
+
+
 // 带模板参数版本：每次调用都会new一个Parser对象
-inline std::shared_ptr<Parser> Parser::rule()
+inline std::shared_ptr<Parser> Parser::rule(std::string info)
 {
-    auto p = std::make_shared<Parser>(); // 先让 shared_ptr 拥有对象
+    auto p = std::make_shared<Parser>(info); // 先让 shared_ptr 拥有对象
     p->reset();                   // 再调 Parser 自己的模板成员
     return p;
 }
 
 template<typename clazz>
-inline std::shared_ptr<Parser> Parser::rule()
+inline std::shared_ptr<Parser> Parser::rule(std::string info)
 {
-    auto p = std::make_shared<Parser>(); // 先让 shared_ptr 拥有对象
+    auto p = std::make_shared<Parser>(info); // 先让 shared_ptr 拥有对象
     p->reset<clazz>();                   // 再调 Parser 自己的模板成员
     return p;
 }
+
+
+
+
 
 //=================== 添加语法单元 ===================
 // 手动向当前规则添加一个 Element
@@ -184,8 +193,10 @@ inline bool Parser::match(Lexer& lexer) const {
 // 顺序执行每个语法单元的 parse()，并将结果组合成 AST
 inline std::shared_ptr<ASTree> Parser::parse(Lexer& lexer) {
 
-    cout << "[3] 顺序执行每个语法单元的 parse()，并将结果组合成 AST" << endl;
-    std::vector<std::shared_ptr<ASTree>> results;  // 子节点结果容器
+    // 调试信息，获取当前的函数所在的类名
+    cout << "[2.1.x] 目前遍历处理" << info << "的语法规则序列elements" << "\n";
+
+    std::vector<std::shared_ptr<ASTree>> results;     // 子节点结果容器  顶级的results会嵌套子类的results  results = [results.....]
 
     for (int i=0; i < elements.size(); i++) {
         auto e = elements[i];

@@ -135,7 +135,7 @@ BasicParser::BasicParser() {
      * 提示： 这里不直接用: std::shared_ptr<Parser> simple = expr; 主要是因为了在语法表述层面将该simple语法的语义化，增强代码的语义化代码描述
      */
     simple = rule<PrimaryExpr>()  // 首先定义一个具有主表达式PrimaryExpr工厂类型的Parser解析器
-                                        ->ast(expr);      // 包装expr表达式
+             ->ast(expr);      // 包装expr表达式
 
     /*
      * 6. 声明语素statement:
@@ -145,15 +145,15 @@ BasicParser::BasicParser() {
                      |simple
      */
     statement = statement0->Or(       // 语义化定义
-                                             rule()->sep("if")   // "if"
-                                              ->ast(expr)   // expr
-                                              ->ast(block)   // block
-                                              ->option(
-                                               rule()->sep("else")->ast(block)
-                                               ),               // ]
-                                             rule()->sep("while")->ast(expr)->ast(block),     // "while" expr block
-                                             simple                               // simple
-                                           );
+                                rule()->sep("if")   // "if"
+                                 ->ast(expr)   // expr
+                                 ->ast(block)   // block
+                                 ->option(
+                                  rule()->sep("else")->ast(block)
+                                  ),               // ]
+                                 rule()->sep("while")->ast(expr)->ast(block),     // "while" expr block
+                                 simple                               // simple
+                                );
     /*
      * 7. 完整程序语法语句语素program:
      * BNF:
@@ -165,15 +165,14 @@ BasicParser::BasicParser() {
 }
 
 // 规则化语法规则对象
-std::shared_ptr<Parser>  BasicParser::rule() {
-    return   Parser::rule();
+std::shared_ptr<Parser>  BasicParser::rule(std::string info) {
+    return   Parser::rule(info);
 }
 
 template<typename T>
-std::shared_ptr<Parser>  BasicParser::rule() {
- return  Parser::rule<T>();
+std::shared_ptr<Parser>  BasicParser::rule(std::string info) {
+ return  Parser::rule<T>(info);
 }
-
 
 
 /*
@@ -183,7 +182,6 @@ std::shared_ptr<Parser>  BasicParser::rule() {
 std::shared_ptr<ASTree> BasicParser::parse(Lexer& lexer) {
     // 调试
     cout << "[2] 处理一个非终结符program，即一条语句， 并返回对应非终结符program语句的ast" << endl;
-
     return  program->parse(lexer);
 };
 

@@ -4,6 +4,7 @@
 #include "../../include/elementChild.h"
 #include <iostream>
 #include "ASTList.h"
+#include "tokenElementChild.h"
 #include "Parser.h"          // 这里拿到 Parser 完整定义
 using namespace elementChild;
 
@@ -136,7 +137,7 @@ void RepeateElement::parse(Lexer& lexer, vector<std::shared_ptr<ASTree>>& res)  
 //标识符 token → Name.class
 //默认情况 → ASTLeaf.class
 template<typename leafType>
-ATokenElement<leafType>::ATokenElement() {
+tokenElementChild::ATokenElement<leafType>::ATokenElement() {
     static_assert(std::is_base_of<ASTLeaf, leafType>::value, "LeafType must derive from ASTLeaf");
 
     // 获取工厂对象实例
@@ -144,7 +145,7 @@ ATokenElement<leafType>::ATokenElement() {
 }
 
 template<typename leafType>
-bool ATokenElement<leafType>::match(Lexer& lexer) const  {
+bool tokenElementChild::ATokenElement<leafType>::match(Lexer& lexer) const  {
     // 取下一个 token（但不消费它），若 null 则返回 false，否则调用 test(t)。
     Token* t = lexer.peek(0);        // 查看下一个token
     if (t == nullptr) return false; // 没有token
@@ -153,7 +154,7 @@ bool ATokenElement<leafType>::match(Lexer& lexer) const  {
 
 
 template<typename leafType>
-void ATokenElement<leafType>::parse(Lexer& lexer, std::vector<std::shared_ptr<ASTree>>& res)   {
+void tokenElementChild::ATokenElement<leafType>::parse(Lexer& lexer, std::vector<std::shared_ptr<ASTree>>& res)   {
 
     // 读取token
     Token* t = lexer.read();
@@ -487,9 +488,3 @@ Precedence* Expr::nextOperator(Lexer& lexer) {
     return ops.get(t->getText());
 }
 
-
-
-// 命名空间生命
-namespace elementChild {
-    template class ATokenElement<ASTLeaf>;
-}
